@@ -1,0 +1,243 @@
+import java.io.*;
+import java.util.*;
+
+// ======= Class Definitions =======
+
+// Part B: Student class
+class Student implements Serializable {
+    private static final long serialVersionUID = 1L;
+    int studentID;
+    String name;
+    double grade;
+
+    Student(int studentID, String name, double grade) {
+        this.studentID = studentID;
+        this.name = name;
+        this.grade = grade;
+    }
+
+    void display() {
+        System.out.println("Student ID : " + studentID);
+        System.out.println("Name       : " + name);
+        System.out.println("Grade      : " + grade);
+    }
+}
+
+// Part C: Employee class
+class Employee implements Serializable {
+    private static final long serialVersionUID = 1L;
+    int id;
+    String name;
+    String designation;
+    double salary;
+
+    Employee(int id, String name, String designation, double salary) {
+        this.id = id;
+        this.name = name;
+        this.designation = designation;
+        this.salary = salary;
+    }
+
+    void display() {
+        System.out.println("ID          : " + id);
+        System.out.println("Name        : " + name);
+        System.out.println("Designation : " + designation);
+        System.out.println("Salary      : " + salary);
+        System.out.println("------------------------------");
+    }
+}
+
+// ======= Main Class =======
+public class Main {
+    static final String STUDENT_FILE = "student.ser";
+    static final String EMPLOYEE_FILE = "employees.dat";
+    static Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        int choice = 0; // ✅ Initialize choice
+
+        do {
+            System.out.println("\n========= MAIN MENU =========");
+            System.out.println("1. Part A: Sum of Integers (Autoboxing)");
+            System.out.println("2. Part B: Student Serialization");
+            System.out.println("3. Part C: Employee Management System");
+            System.out.println("4. Part D: Custom Logic (Placeholder)");
+            System.out.println("5. Exit");
+            System.out.print("Enter your choice: ");
+
+            try {
+                choice = Integer.parseInt(scanner.nextLine());
+            } catch (Exception e) {
+                System.out.println("Invalid input.");
+                continue;
+            }
+
+            switch (choice) {
+                case 1:
+                    sumOfIntegers();
+                    break;
+                case 2:
+                    handleStudentSerialization();
+                    break;
+                case 3:
+                    employeeManagementSystem();
+                    break;
+                case 4:
+                    partDLogic();
+                    break;
+                case 5:
+                    System.out.println("Exiting... 🚪");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Try again.");
+            }
+
+        } while (choice != 5);
+    }
+
+    // ======= PART A =======
+    static void sumOfIntegers() {
+        ArrayList<Integer> numbers = new ArrayList<>();
+        System.out.println("\nEnter integers (type 'done' to finish):");
+
+        while (true) {
+            String input = scanner.nextLine();
+            if (input.equalsIgnoreCase("done")) break;
+
+            try {
+                Integer num = Integer.parseInt(input); // Autoboxing
+                numbers.add(num);
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number.");
+            }
+        }
+
+        int sum = 0;
+        for (int num : numbers) { // Unboxing
+            sum += num;
+        }
+
+        System.out.println("Total Sum = " + sum);
+    }
+
+    // ======= PART B =======
+    static void handleStudentSerialization() {
+        System.out.println("\n--- Student Serialization ---");
+
+        Student student = new Student(101, "Alice", 88.5);
+
+        // Serialize
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(STUDENT_FILE))) {
+            oos.writeObject(student);
+            System.out.println("✅ Student serialized successfully.");
+        } catch (IOException e) {
+            System.out.println("❌ Error during serialization.");
+        }
+
+        // Deserialize
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(STUDENT_FILE))) {
+            Student s = (Student) ois.readObject();
+            System.out.println("✅ Student deserialized:");
+            s.display();
+        } catch (Exception e) {
+            System.out.println("❌ Error during deserialization.");
+        }
+    }
+
+    // ======= PART C =======
+    static void employeeManagementSystem() {
+        ArrayList<Employee> employees = loadEmployees();
+        int choice = 0; // ✅ Initialize choice for this loop
+
+        do {
+            System.out.println("\n--- Employee Management ---");
+            System.out.println("1. Add Employee");
+            System.out.println("2. Display All Employees");
+            System.out.println("3. Back to Main Menu");
+            System.out.print("Enter your choice: ");
+
+            try {
+                choice = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input.");
+                continue;
+            }
+
+            switch (choice) {
+                case 1:
+                    addEmployee(employees);
+                    saveEmployees(employees);
+                    break;
+                case 2:
+                    displayEmployees(employees);
+                    break;
+                case 3:
+                    System.out.println("Returning to Main Menu.");
+                    break;
+                default:
+                    System.out.println("Invalid choice.");
+            }
+        } while (choice != 3);
+    }
+
+    static void addEmployee(ArrayList<Employee> employees) {
+        try {
+            System.out.print("Enter ID: ");
+            int id = Integer.parseInt(scanner.nextLine());
+
+            System.out.print("Enter Name: ");
+            String name = scanner.nextLine();
+
+            System.out.print("Enter Designation: ");
+            String designation = scanner.nextLine();
+
+            System.out.print("Enter Salary: ");
+            double salary = Double.parseDouble(scanner.nextLine());
+
+            Employee emp = new Employee(id, name, designation, salary);
+            employees.add(emp);
+            System.out.println("✅ Employee added.");
+        } catch (Exception e) {
+            System.out.println("❌ Invalid input.");
+        }
+    }
+
+    static void displayEmployees(ArrayList<Employee> employees) {
+        if (employees.isEmpty()) {
+            System.out.println("⚠️ No employees found.");
+            return;
+        }
+
+        System.out.println("\n=== Employee Records ===");
+        for (Employee emp : employees) {
+            emp.display();
+        }
+    }
+
+    static void saveEmployees(ArrayList<Employee> employees) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(EMPLOYEE_FILE))) {
+            oos.writeObject(employees);
+        } catch (IOException e) {
+            System.out.println("❌ Error saving employees.");
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    static ArrayList<Employee> loadEmployees() {
+        File file = new File(EMPLOYEE_FILE);
+        if (!file.exists()) return new ArrayList<>();
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+            return (ArrayList<Employee>) ois.readObject();
+        } catch (Exception e) {
+            System.out.println("⚠️ Could not load employees. Starting with empty list.");
+            return new ArrayList<>();
+        }
+    }
+
+    // ======= PART D (Placeholder) =======
+    static void partDLogic() {
+        System.out.println("\n--- Part D Placeholder ---");
+        System.out.println("⚙️  You can implement additional logic here.");
+    }
+}
