@@ -16,8 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 public class EmployeeServlet extends HttpServlet {
 
     private static final String DB_URL = "jdbc:mysql://localhost:3306/companydb";
-    private static final String DB_USER = "root";
-    private static final String DB_PASS = "your_password";
+    private static final String DB_USER = "java";
+    private static final String DB_PASS = "Mukul@123";
     private static final String DB_DRIVER = "com.mysql.cj.jdbc.Driver";
 
     @Override
