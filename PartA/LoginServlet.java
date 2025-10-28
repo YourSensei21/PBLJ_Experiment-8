@@ -37,8 +37,8 @@ public class LoginServlet extends HttpServlet {
         // 3. Retrieve the parameters from the request.
         // The strings "username" and "password" MUST match the 'name' attributes
         // in your HTML <input> tags.
-        String user = request.getParameter("username");
-        String pass = request.getParameter("password");
+        String user = request.getParameter("java");
+        String pass = request.getParameter("Mukul@123");
 
         // 4. Validate the credentials (hardcoded, as per the objective)
         // In a real app, you would check this against a database.
@@ -88,3 +88,4 @@ public class LoginServlet extends HttpServlet {
         out.close();
     }
 }
+
